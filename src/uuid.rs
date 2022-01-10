@@ -1,4 +1,5 @@
 use clap::{App, Arg, ArgMatches};
+use std::error::Error;
 use uuid::Uuid;
 
 const HELP: &str = "You need to specify a subcommand. For more information try --help";
@@ -20,7 +21,7 @@ pub fn subcommand<'a>() -> App<'a> {
             ])]);
 }
 
-pub fn process(app_m: &ArgMatches) {
+pub fn process(app_m: &ArgMatches) -> Result<(), Box<dyn Error>> {
     match app_m.subcommand() {
         Some(("generate", sub_m)) => {
             let uuid = Uuid::new_v4();
@@ -32,9 +33,9 @@ pub fn process(app_m: &ArgMatches) {
             } else {
                 println!("{}", uuid);
             }
+            return Ok(());
         }
-        _ => {
-            println!("{}", HELP)
-        }
+        _ => return Err(HELP.into()),
     }
 }
+
